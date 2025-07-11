@@ -1,0 +1,25 @@
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: test_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql # mounts the docker volume to the specified path in the container. data persists regardless of container state.
+
+  web:
+    build: . # builds an the dockerfile in pwd into an image
+    ports:
+      - "5000:5000"
+    depends_on: # controls start order for db container to start first.
+      - db
+    environment:
+      FLASK_ENV: development
+    volumes:
+      - .:/app # creates a bind mount from the pwd to the specified path in the container.
+
+# creates a docker volume
+volumes:
+  db_data:
